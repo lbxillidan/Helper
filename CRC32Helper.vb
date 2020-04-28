@@ -1,4 +1,18 @@
 Public Class CRC32Helper
+    Public Enum CRC32Seed As UInt32
+        '04C11DB7
+        IEEE802d3 = &HEDB88320UI
+        '82608EDB
+
+        '1EDC6F41
+        Castagnoli = &H82F63B78UI
+        '8F6E37A0
+
+        '741B8CD7
+        Koopman = &HEB31D82EUI
+        'BA0DC66B
+    End Enum
+
     Private Shared ReadOnly Table(256) As UInt32
     ''' <summary>
     ''' 设置MagicNumber,默认0xEDB88320
@@ -7,10 +21,10 @@ Public Class CRC32Helper
     ''' <remarks></remarks>
     Public Shared WriteOnly Property Seed As UInt32
         Set(value As UInt32)
-            For i As UInt32 = 0 To 255
+            For i As UInt32 = 0UI To 255UI
                 Dim r As UInt32 = i
-                For j As UInt32 = 0 To 7
-                    If (r And 1) <> 0 Then
+                For j As UInt32 = 0UI To 7UI
+                    If (r And 1UI) <> 0UI Then
                         r = (r >> 1) Xor value
                     Else
                         r >>= 1
@@ -33,7 +47,7 @@ Public Class CRC32Helper
         Dim TempUInt As UInt32 = UInt32.MaxValue
         Dim TempByte As Byte
         For i As UInt32 = 0 To count - 1
-            TempByte = TempUInt Mod 256
+            TempByte = TempUInt Mod 256UI
             TempUInt = Table(TempByte Xor buffer(offset + i)) Xor (TempUInt >> 8)
         Next
         Return TempUInt Xor UInt32.MaxValue
