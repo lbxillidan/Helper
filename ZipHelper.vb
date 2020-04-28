@@ -276,6 +276,8 @@ Public Class ZipHelper
                     Me.FileInfo.FileData = Me.FileData
                 Case CompressionMethodType.Deflated
                     Me.FileInfo.FileData = DeflateHelper.Decode(Me.FileData)
+                Case Else
+                    Throw New NotSupportedException("不支持的压缩方法")
             End Select
         End Sub
 
