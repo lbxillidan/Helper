@@ -280,7 +280,7 @@ Public Class ServiceManager
         End If
     End Function
 
-    Private Function WaitForCommandResultFileDel() As Boolean
+    Private Function WaitForDelCommandResultFile() As Boolean
         Dim TimeStart As Date = Date.Now
         While True
             If System.IO.File.Exists(CommandResultFile) = False Then
@@ -295,7 +295,7 @@ Public Class ServiceManager
         End While
         Return False
     End Function
-    Private Function WaitForCommandResultFileAdd() As Boolean
+    Private Function WaitForAddCommandResultFile() As Boolean
         Dim TimeStart As Date = Date.Now
         While True
             If System.IO.File.Exists(CommandResultFile) = True Then
@@ -331,13 +331,13 @@ Public Class ServiceManager
         End If
         '删除结果文件
         ServiceController.ExecuteCommand(CustomCommand.DelResult)
-        If WaitForCommandResultFileDel() = False Then
+        If WaitForDelCommandResultFile() = False Then
             Me.Message = "清空命令结果失败！"
             Return False
         End If
         '执行命令
         ServiceController.ExecuteCommand(command)
-        If WaitForCommandResultFileAdd() = False Then
+        If WaitForAddCommandResultFile() = False Then
             Me.Message = "读取命令结果失败！"
             Return False
         End If
@@ -347,33 +347,28 @@ Public Class ServiceManager
     End Function
 
 #Region "仅供服务使用"
-    Private Enum CustomCommand As Integer
+    Public Enum CustomCommand As Integer
         DelResult = 255
     End Enum
 
-    Public Function PrepareCommand(command As Integer) As Boolean
+    Public Function DelCommandResult() As Boolean
         If SetCommandResultFile() = False Then
             Message = "获取CommandResultFile失败！"
             Return False
         End If
 
-        Select Case command
-            Case CustomCommand.DelResult
-                Try
-                    If System.IO.File.Exists(CommandResultFile) Then
-                        System.IO.File.Delete(CommandResultFile)
-                    End If
-                    Return True
-                Catch ex As Exception
-                    Me.Message = "删除结果文件失败：" & ex.Message
-                    Return False
-                End Try
-            Case Else
-                Return True
-        End Select
+        Try
+            If System.IO.File.Exists(CommandResultFile) Then
+                System.IO.File.Delete(CommandResultFile)
+            End If
+            Return True
+        Catch ex As Exception
+            Me.Message = "删除结果文件失败：" & ex.Message
+            Return False
+        End Try
     End Function
 
-    Public Function AppendCommandResult(rst As String) As Boolean
+    Public Function AddCommandResult(rst As String) As Boolean
         If String.IsNullOrEmpty(rst) Then
             Return True
         End If
@@ -382,7 +377,7 @@ Public Class ServiceManager
             Return False
         End If
         Try
-            System.IO.File.AppendAllText(CommandResultFile, rst & vbCrLf)
+            System.IO.File.WriteAllText(CommandResultFile, Date.Now.ToString("yyyy-MM-dd HH:mm:ss.ff") & vbCrLf & rst)
             Return True
         Catch ex As Exception
             Message = "写入CommandResultFile失败！"
@@ -391,3 +386,4 @@ Public Class ServiceManager
     End Function
 #End Region
 End Class
+
