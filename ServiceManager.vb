@@ -32,7 +32,7 @@ Public Class ServiceManager
         End If
         If String.IsNullOrEmpty(Me.ServiceFile) Then
             Message = "获取ServiceFile失败！"
-            Return False
+            Return False 
         Else
             Return True
         End If
