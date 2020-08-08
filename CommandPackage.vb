@@ -1,3 +1,4 @@
+'8B007A51B6C761655A967E9E1520C0AC381579B6D0A5CB4AB1EEF1133B7942F9
 Public Class CommandPackage
     Public Enum PkgValueType As Integer
         [Auto] = 0
